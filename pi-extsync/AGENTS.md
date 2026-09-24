@@ -24,12 +24,16 @@
    node tools/pi-sync.mjs status --repo . --agent-dir /tmp/pi-sync-demo
    node tools/pi-sync.mjs sync   --repo . --agent-dir /tmp/pi-sync-demo --dry-run
    ```
-3. **安装**（二选一，不要同时用）：
+3. **安装**（三条途径任选其一，不要混用；命令都在**仓库根目录**执行）：
    ```bash
-   ln -sfn "$(pwd)/extensions/extsync.ts" ~/.pi/agent/extensions/extsync.ts   # 开发期
-   pi install "$(pwd)"                                                        # 正式（本地路径，不复制）
+   mkdir -p ~/.pi/agent/extensions
+   node tools/pi-sync.mjs sync                                                           # 推荐：整仓一键（含本扩展自身）
+   ln -sfn "$(pwd)/pi-extsync/extensions/extsync.ts" ~/.pi/agent/extensions/extsync.ts   # 或：只软链本扩展
+   pi install "$(pwd)/pi-extsync"                                                          # 或：作为本地 pi 包（写用户 settings）
    ```
-4. **生效**：改完执行内置 `/reload`，或新开会话。
+4. **生效**：新开会话会自动加载；**已经开着的会话执行内置 `/reload`**。内核按 cwd 缓存模块，
+   改代码后**只新建会话可能仍是旧代码**。
+5. **卸载**：删 `~/.pi/agent/extensions/extsync.ts`，或 `pi remove "$(pwd)/pi-extsync"`，或整仓 `node tools/pi-sync.mjs uninstall`。
 
 ## 硬性约束
 

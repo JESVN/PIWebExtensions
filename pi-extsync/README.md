@@ -28,17 +28,36 @@ pi 从 `<agent-dir>/extensions/` 加载扩展，而这个仓库是「一个子�
 
 ## 安装
 
-`pi-extsync` 需要和仓库一起使用（它调用仓库里的 `tools/pi-sync.mjs`）。二选一，**不要同时用**：
+pi 从 `<agent-dir>/extensions/` 加载扩展。`<agent-dir>` 默认是 `~/.pi/agent`，可用环境变量 `PI_CODING_AGENT_DIR` 覆盖。
+
+`pi-extsync` 需要与仓库克隆一起使用（它调用仓库里的 `tools/pi-sync.mjs`）。下面三条途径**任选其一，不要混用**。**以下命令都在本仓库根目录执行。**
+
+### 途径 1：一键同步整个仓库（推荐）
 
 ```bash
-# 方式一：软链（开发期推荐）
-ln -sfn "$(pwd)/extensions/extsync.ts" ~/.pi/agent/extensions/extsync.ts
-
-# 方式二：作为本地 pi 包安装（读仓库路径，不复制）
-pi install "$(pwd)"
+node tools/pi-sync.mjs sync
 ```
 
-装好后**新开一个会话**（或 `/reload`）生效。
+这条命令会把仓库里所有扩展（含 `pi-extsync` 自己）软链进 `<agent-dir>/extensions/`，并清理仓库中已删除的扩展 —— **新机器上首次安装走这条最省事**，装完才有一键 `/extsync` 可用。
+
+### 途径 2：软链本扩展（开发期）
+
+```bash
+mkdir -p ~/.pi/agent/extensions
+ln -sfn "$(pwd)/pi-extsync/extensions/extsync.ts" ~/.pi/agent/extensions/extsync.ts
+```
+
+### 途径 3：作为本地 pi 包安装（长期）
+
+```bash
+pi install "$(pwd)/pi-extsync"   # 读仓库路径，不复制；会写用户 settings
+```
+
+### 生效与卸载
+
+- **生效**：新开会话会自动加载；**已经开着的会话**要执行内置 `/reload`。不要重启 pi-web。
+- **卸载**：途径 1 用 `node tools/pi-sync.mjs uninstall`；途径 2 删掉 `~/.pi/agent/extensions/extsync.ts`；途径 3 用 `pi remove "$(pwd)/pi-extsync"`。
+- **验证**：新会话里敲 `/extsync status`（只读），应列出仓库里的扩展与当前状态。
 
 ## 安全边界
 

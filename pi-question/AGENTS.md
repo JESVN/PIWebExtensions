@@ -17,13 +17,17 @@
    ```
    仓库**不内置任何本机绝对路径**，必须传 `PI_KERNEL_DIR`；找不到内核时用 `pm2 describe pi-web`
    （script path 去掉 `/bin/...` 即安装目录）。
-2. **安装**（二选一，不要同时用，否则 `question` 会重复注册）：
+2. **安装**（三条途径任选其一，不要混用；命令都在**仓库根目录**执行）：
    ```bash
-   ln -sfn "$(pwd)/extensions/question.ts" ~/.pi/agent/extensions/question.ts   # 开发期：改代码免复制
-   pi install "$(pwd)"                                                          # 正式：会写用户 settings
+   mkdir -p ~/.pi/agent/extensions
+   node tools/pi-sync.mjs sync                                                              # 推荐：整仓一键
+   ln -sfn "$(pwd)/pi-question/extensions/question.ts" ~/.pi/agent/extensions/question.ts   # 或：只软链本扩展
+   pi install "$(pwd)/pi-question"                                                          # 或：作为本地 pi 包（写用户 settings）
    ```
-3. **生效**：在 pi-web 任一会话执行内置 `/reload`（内核有按 cwd 的模块缓存，**只新建会话可能仍是旧代码**），
-   然后按 [DESIGN.md](DESIGN.md) 的「验收脚本」做 4 轮手工核对（需要用户在场点弹窗）。
+   （三条不要同时用，否则 `question` 会重复注册。）
+3. **生效**：新开会话会自动加载；**已经开着的会话执行内置 `/reload`**。内核有按 cwd 的模块缓存，
+   改代码后**只新建会话可能仍是旧代码** → 用 `/reload`。然后按 [DESIGN.md](DESIGN.md) 的「验收脚本」做 4 轮手工核对（需要用户在场点弹窗）。
+4. **卸载**：删 `~/.pi/agent/extensions/question.ts`，或 `pi remove "$(pwd)/pi-question"`，或整仓 `node tools/pi-sync.mjs uninstall`。
 
 ## 硬性约束
 
@@ -48,7 +52,7 @@
 ## 在新机器上首次安装（可选）
 
 1. 在 pi-web 侧边栏用**目录选择器**选中本仓库根目录，否则该目录建会话会 Access denied；
-2. 按上面「改完怎么验证」跑冒烟测试 → 装符号链接 → `/reload`。
+2. 按上面「改完怎么验证」跑冒烟测试 → 装软链 → `/reload`。
 
 ## 环境备忘（源机器实测值，仅供本机参考，不要写进代码）
 

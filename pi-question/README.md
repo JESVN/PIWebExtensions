@@ -34,25 +34,39 @@ pi 的内置工具只有 `read / bash / edit / write / grep / find / ls`，**没
 
 ## 安装
 
-### 方式一：符号链接（开发期推荐）
+pi 从 `<agent-dir>/extensions/` 加载扩展。`<agent-dir>` 默认是 `~/.pi/agent`，可用环境变量 `PI_CODING_AGENT_DIR` 覆盖。
+
+下面三条途径**任选其一，不要混用**——同一个扩展既软链、又用包安装，会让 `question` 工具重复注册。**以下命令都在本仓库根目录执行。**
+
+### 途径 1：一键同步整个仓库（推荐）
+
+```bash
+node tools/pi-sync.mjs sync
+```
+
+把仓库里所有扩展软链进 `<agent-dir>/extensions/`。装好后即可在会话里用 `/extsync` 随时重来（见 [`pi-extsync/`](../pi-extsync/)，它也是本仓库的扩展）。
+
+### 途径 2：软链本扩展（开发期，改代码免复制）
 
 ```bash
 mkdir -p ~/.pi/agent/extensions
-ln -sfn "$(pwd)/extensions/question.ts" ~/.pi/agent/extensions/question.ts   # 在仓库根目录执行
+ln -sfn "$(pwd)/pi-question/extensions/question.ts" ~/.pi/agent/extensions/question.ts
 ```
 
-修改 `extensions/question.ts` 后，在 pi-web **任一会话执行 `/reload`** 生效
-（内核有按 cwd 的模块缓存，仅新建会话可能读到旧代码）；不要重启 pi-web。
-
-### 方式二：作为 pi 包安装（长期）
+### 途径 3：作为 pi 包安装（长期）
 
 ```bash
-pi install "$(pwd)"   # 在仓库根目录执行
+pi install "$(pwd)/pi-question"   # 会写用户 settings
 ```
 
-注意：两种方式不要同时使用，否则 `question` 工具会重复注册。
+### 生效与卸载
 
-> 换机器 / 首次安装的完整步骤（含内核路径定位、验收流程）见 `AGENTS.md` 的「新机器安装（bootstrap）」。
+- **生效**：新开会话会自动加载；**已经开着的会话**要执行内置 `/reload`。
+  修改 `extensions/question.ts` 后尤其要注意：内核按 cwd 缓存模块，仅新建会话**可能仍读到旧代码**，用 `/reload` 最稳。不要重启 pi-web。
+- **卸载**：途径 1 用 `node tools/pi-sync.mjs uninstall`；途径 2 删掉 `~/.pi/agent/extensions/question.ts`；途径 3 用 `pi remove "$(pwd)/pi-question"`。
+- **验证**：新会话里让模型调用 `question`（示例见下方「用法」，或 [DESIGN.md](DESIGN.md) 的「验收脚本」）。
+
+> 换机器 / 首次安装的完整步骤（含内核路径定位、验收流程）见 [AGENTS.md](AGENTS.md) 的「在新机器上首次安装（可选）」。
 
 ## 用法
 

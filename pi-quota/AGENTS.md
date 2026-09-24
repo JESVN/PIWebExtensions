@@ -17,13 +17,17 @@
    ```
    仓库**不内置任何本机绝对路径**，必须传 `PI_KERNEL_DIR`；用它反推安装目录：
    `pm2 describe pi-web | grep "script path"`（script path 去掉 `/bin/...` 即安装目录）。
-2. **安装**（二选一，不要同时用）：
+2. **安装**（三条途径任选其一，不要混用；命令都在**仓库根目录**执行）：
    ```bash
-   ln -sfn "$(pwd)/extensions/quota.ts" ~/.pi/agent/extensions/quota.ts   # 开发期
-   pi install "$(pwd)"                                                    # 正式
+   mkdir -p ~/.pi/agent/extensions
+   node tools/pi-sync.mjs sync                                                        # 推荐：整仓一键
+   ln -sfn "$(pwd)/pi-quota/extensions/quota.ts" ~/.pi/agent/extensions/quota.ts       # 或：只软链本扩展
+   pi install "$(pwd)/pi-quota"                                                        # 或：作为本地 pi 包（写用户 settings）
    ```
-3. **生效**：扩展在会话启动时加载 → **新开一个会话**，敲 `/quota`，或在对话里问「查额度」。
-   旧会话看不到新工具，属正常。
+   （不要混用，否则 `provider_quota` 会重复注册。）
+3. **生效**：新开会话会自动加载；**已经开着的会话执行内置 `/reload`**。内核按 cwd 缓存模块，
+   改代码后**只新建会话可能仍是旧代码**。敲 `/quota`，或在对话里问「查额度」。
+4. **卸载**：删 `~/.pi/agent/extensions/quota.ts`，或 `pi remove "$(pwd)/pi-quota"`，或整仓 `node tools/pi-sync.mjs uninstall`。
 
 ## 硬性约束
 

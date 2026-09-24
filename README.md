@@ -16,21 +16,44 @@ pi-web 是 [pi coding agent](https://github.com/earendil-works/pi) 的 Web UI。
 
 ## 安装
 
-pi 会从 `<agent-dir>/extensions/` 加载扩展，支持直接放 TypeScript 文件或用软链指向本仓库：
+pi 从 `<agent-dir>/extensions/` 加载扩展。`<agent-dir>` 默认是 `~/.pi/agent`，可用环境变量 `PI_CODING_AGENT_DIR` 覆盖。
+
+下面三条途径**任选其一，不要混用**——同一个扩展既软链、又用包安装，会让工具重复注册。**以下命令都在本仓库根目录执行。**
+
+### 途径 1：一键同步整个仓库（推荐）
 
 ```bash
-# 方式一：软链（开发期推荐，改代码免复制）——或直接 `node tools/pi-sync.mjs sync` 一把梭
-ln -sfn "$(pwd)/pi-extsync/extensions/extsync.ts" ~/.pi/agent/extensions/extsync.ts
+node tools/pi-sync.mjs sync
+```
+
+它把仓库里所有扩展软链进 `<agent-dir>/extensions/`，并清理仓库中已删除的扩展。装好后即可在会话里用 `/extsync` 随时重来（见 [`pi-extsync/`](pi-extsync/)）。换机器时：`git pull` 后再跑一次这条命令即可。
+
+### 途径 2：软链单个扩展（开发期，改代码免复制）
+
+```bash
+mkdir -p ~/.pi/agent/extensions
+
+ln -sfn "$(pwd)/pi-extsync/extensions/extsync.ts"   ~/.pi/agent/extensions/extsync.ts
 ln -sfn "$(pwd)/pi-question/extensions/question.ts" ~/.pi/agent/extensions/question.ts
 ln -sfn "$(pwd)/pi-quota/extensions/quota.ts"       ~/.pi/agent/extensions/quota.ts
+```
 
-# 方式二：作为 pi 包安装（会写用户 settings）
-pi install "$(pwd)/pi-extsync"
+（按需只保留你要装的那一行。）
+
+### 途径 3：作为 pi 包安装（长期）
+
+```bash
+pi install "$(pwd)/pi-extsync"     # 会写用户 settings
 pi install "$(pwd)/pi-question"
 pi install "$(pwd)/pi-quota"
 ```
 
-两种方式**不要同时用**，否则同名工具会重复注册。装好后**新开一个会话**即生效。
+### 生效与卸载
+
+- **生效**：新开一个会话会自动加载；**已经开着的会话**要执行内置 `/reload`。
+  如果改的是**已有扩展的代码**，内核按 cwd 缓存模块，仅新开会话可能仍是旧代码——这种情况用 `/reload`。全程**不要重启 pi-web**。
+- **卸载**：途径 1 用 `node tools/pi-sync.mjs uninstall`；途径 2 删掉 `<agent-dir>/extensions/<文件>`；途径 3 用 `pi remove <安装时用的路径>`。
+- **验证**：新会话里确认工具/命令已出现，例如敲 `/quota`、`/extsync`，或让模型调用 `question`。
 
 ## 开发
 
@@ -46,8 +69,7 @@ pi install "$(pwd)/pi-quota"
    ```bash
    node tools/check-hygiene.mjs
    ```
-5. 多机同步扩展用 `node tools/pi-sync.mjs`（详见 [`pi-extsync/`](pi-extsync/)）：
-   一台机器改完 push，另一台 `git pull` 后跑一次 `sync` 即可；`uninstall` 可一键卸出全部扩展。
+5. 多机同步扩展：另一台机器 `git pull` 后跑一次 `node tools/pi-sync.mjs sync`（详见 [`pi-extsync/`](pi-extsync/)）。
 
 ## 上游环境（实测版本）
 
