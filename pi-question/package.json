@@ -1,0 +1,16 @@
+{
+  "name": "pi-question",
+  "version": "0.1.0",
+  "description": "Ask the user a question with clickable options in pi / pi-web",
+  "license": "MIT",
+  "type": "module",
+  "keywords": ["pi-package"],
+  "files": ["extensions", "docs", "README.md", "DESIGN.md", "AGENTS.md", "CHANGELOG.md", "LICENSE"],
+  "pi": {
+    "extensions": ["./extensions"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  }
+}

@@ -1,0 +1,39 @@
+# 依赖与构建产物（本仓库不应有，扩展由内核 jiti 免编译加载）
+node_modules/
+dist/
+build/
+.next/
+coverage/
+
+# 编辑器与系统
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# 日志与临时文件
+*.log
+*.tmp
+tmp/
+
+# pi 的本地凭据 / 配置（永远不要提交）
+.env
+.env.*
+auth.json
+models.json
+settings.json
+sessions/
+pi-web-session-index.json
+web-push.json
+
+# 密钥与证书
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+known_hosts
+
+# 可能含私人对话的导出物
+Session Export*.html
+*.tgz

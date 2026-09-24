@@ -1,0 +1,16 @@
+{
+  "name": "pi-quota",
+  "version": "0.1.0",
+  "description": "Query provider quota/usage (OpenCode Go) inside pi and pi-web",
+  "license": "MIT",
+  "type": "module",
+  "keywords": ["pi-package"],
+  "files": ["extensions", "README.md", "LICENSE"],
+  "pi": {
+    "extensions": ["./extensions"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  }
+}
