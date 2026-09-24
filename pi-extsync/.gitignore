@@ -1,0 +1,23 @@
+node_modules/
+*.log
+.DS_Store
+
+# 浏览器导出的会话文件（可能含私人对话，勿提交）
+Session Export*.html
+*.tgz
+
+# pi 的本地凭据 / 配置（永远不要提交）
+.env
+.env.*
+auth.json
+settings.json
+models.json
+sessions/
+
+# 密钥与证书
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+known_hosts

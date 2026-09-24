@@ -86,6 +86,7 @@ PIWebExtensions/
 
 | 目录 | 提供 | 说明 |
 |---|---|---|
+| [`pi-extsync/`](pi-extsync/) | 命令 `/extsync` + 工具 `ext_sync` | 一键把本仓库的全部扩展同步进 / 卸出 agent 扩展目录（核心引擎在 `tools/pi-sync.mjs`） |
 | [`pi-question/`](pi-question/) | 工具 `question` | 用「可点击选项」向用户提问，替代在正文里写 1/2/3 |
 | [`pi-quota/`](pi-quota/) | 工具 `provider_quota` + 命令 `/quota` | 查询模型服务商额度用量（当前支持 OpenCode Go） |
 

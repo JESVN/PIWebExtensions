@@ -8,6 +8,7 @@ pi-web 是 [pi coding agent](https://github.com/earendil-works/pi) 的 Web UI。
 
 | 扩展 | 提供 | 一句话 |
 |---|---|---|
+| [`pi-extsync`](pi-extsync/) | 命令 `/extsync` + 工具 `ext_sync` | 一键把本仓库的全部扩展同步进 / 卸出 agent 扩展目录，并清理已删除的扩展 |
 | [`pi-question`](pi-question/) | 工具 `question` | 让模型用**可点击选项**向你提问，而不是在正文写 1/2/3 让你打字数数 |
 | [`pi-quota`](pi-quota/) | 工具 `provider_quota` + 命令 `/quota` | 在会话里直接查模型服务商额度用量（当前支持 OpenCode Go） |
 
@@ -18,11 +19,13 @@ pi-web 是 [pi coding agent](https://github.com/earendil-works/pi) 的 Web UI。
 pi 会从 `<agent-dir>/extensions/` 加载扩展，支持直接放 TypeScript 文件或用软链指向本仓库：
 
 ```bash
-# 方式一：软链（开发期推荐，改代码免复制）
+# 方式一：软链（开发期推荐，改代码免复制）——或直接 `node tools/pi-sync.mjs sync` 一把梭
+ln -sfn "$(pwd)/pi-extsync/extensions/extsync.ts" ~/.pi/agent/extensions/extsync.ts
 ln -sfn "$(pwd)/pi-question/extensions/question.ts" ~/.pi/agent/extensions/question.ts
 ln -sfn "$(pwd)/pi-quota/extensions/quota.ts"       ~/.pi/agent/extensions/quota.ts
 
 # 方式二：作为 pi 包安装（会写用户 settings）
+pi install "$(pwd)/pi-extsync"
 pi install "$(pwd)/pi-question"
 pi install "$(pwd)/pi-quota"
 ```
@@ -43,6 +46,8 @@ pi install "$(pwd)/pi-quota"
    ```bash
    node tools/check-hygiene.mjs
    ```
+5. 多机同步扩展用 `node tools/pi-sync.mjs`（详见 [`pi-extsync/`](pi-extsync/)）：
+   一台机器改完 push，另一台 `git pull` 后跑一次 `sync` 即可；`uninstall` 可一键卸出全部扩展。
 
 ## 上游环境（实测版本）
 

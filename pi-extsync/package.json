@@ -1,0 +1,16 @@
+{
+  "name": "pi-extsync",
+  "version": "0.1.0",
+  "description": "One-command sync of this repo's pi extensions into the agent extensions directory",
+  "license": "MIT",
+  "type": "module",
+  "keywords": ["pi-package"],
+  "files": ["extensions", "README.md", "DESIGN.md", "AGENTS.md", "CHANGELOG.md", "LICENSE"],
+  "pi": {
+    "extensions": ["./extensions"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  }
+}
